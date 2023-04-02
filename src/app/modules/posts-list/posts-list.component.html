@@ -9,36 +9,119 @@
         </div>
     </div>
     <div>
-        <table mat-table [dataSource]="postsList" class="mat-elevation-z8 w-100">
-            <!-- Position Column -->
-            <ng-container matColumnDef="N°">
+        <!-- <table mat-table [dataSource]="postsList" class="mat-elevation-z8 w-100" *ngIf="!progress"> -->
+        <!-- Position Column -->
+        <!-- <ng-container matColumnDef="N°">
                 <th mat-header-cell *matHeaderCellDef> N° </th>
                 <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-            </ng-container>
+            </ng-container> -->
 
-            <!-- title Column -->
-            <ng-container matColumnDef="Title">
+        <!-- title Column -->
+        <!-- <ng-container matColumnDef="Title">
                 <th mat-header-cell *matHeaderCellDef> Title </th>
                 <td mat-cell *matCellDef="let element"> {{element.title}} </td>
-            </ng-container>
+            </ng-container> -->
 
-            <!-- body Column -->
-            <ng-container matColumnDef="Description">
+        <!-- body Column -->
+        <!-- <ng-container matColumnDef="Description">
                 <th mat-header-cell *matHeaderCellDef> Description </th>
                 <td mat-cell *matCellDef="let element"> {{element.body}} </td>
+            </ng-container> -->
+
+        <!-- <tr mat-header-row *matHeaderRowDef="displayedColumnsLabels"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsLabels;"></tr> -->
+        <!-- </table> -->
+        <table mat-table [dataSource]="postsList" class="mat-elevation-z8" *ngIf="!progress">
+            <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumnsLabels">
+                <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                <ng-container *ngIf="column==='N°'">
+                    <td mat-cell *matCellDef="let element; let j = index"> {{j+1}} </td>
+                </ng-container>
+                <ng-container *ngIf="column==='Title'">
+                    <td mat-cell *matCellDef="let element"> {{element['title']}} </td>
+                </ng-container>
+                <ng-container *ngIf="column==='Description'">
+                    <td mat-cell *matCellDef="let element"> {{element['body']}} </td>
+                </ng-container>
+                <ng-container *ngIf="column==='Action'">
+                    <td mat-cell *matCellDef="let element;let j=index">
+                        <div class="d-flex justify-content-end align-items-center p-1">
+                            <button class="btn btn-success btn-sm mr-2" (click)="updatePost(element,j,modalAjout)">
+                                <span class="material-icons text-white">edit</span>
+                            </button>
+                            <button class="btn btn-danger btn-sm" (click)="deletePost(element['id'],deleteModal)">
+                                <span class="material-icons text-white">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumnsLabels"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumnsLabels;"></tr>
         </table>
+        <!-- <mat-paginator #paginator *ngIf="dataSource?.filteredData?.length" showFirstLastButtons [pageSize]="pageSize" [length]="dataSource?.filteredData?.length" (page)="getPaginatorData($event)" [pageSizeOptions]="[10, 25, 100]">
+        </mat-paginator> -->
+        <div class="text-center" *ngIf="progress">
+            <mat-spinner></mat-spinner>
+        </div>
     </div>
 </div>
 
 <ng-template #modalAjout>
-    <div>
-        <input placeholder="title">
+    <div class="dialog-head bg-info p-2">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="text-white m-0"> {{mode}} Post</h4>
+            <button class="btn btn-trp btn-sm" (click)="cancelModal()">
+                <span class="material-icons text-white">close</span>
+            </button>
+        </div>
     </div>
-    <div>
-        <textarea></textarea>
+    <div class="modal-body" [formGroup]="formPost">
+        <div class="form-group">
+            <span>Title <span class="text-danger">*</span></span>
+            <input class="form-control" placeholder="title" formControlName="title">
+            <small class="text-danger" *ngIf="formPost.get('title')?.touched && formPost.get('title')?.errors"> champs required</small>
+        </div>
+        <div class="form-group">
+            <span>Description <span class="text-danger">*</span></span>
+            <textarea class="form-control" formControlName="body"></textarea>
+            <small class="text-danger" *ngIf="formPost.get('body')?.touched && formPost.get('body')?.errors"> champs required</small>
+        </div>
+    </div>
+    <div class="modal-fouter d-flex justify-content-end p-1">
+        <button class="btn btn-sm btn-secondary mr-2" (click)="cancelModal()"> Annuler</button>
+        <button class="btn btn-sm btn-success" (click)="savePost()"> Enregistrer</button>
+    </div>
+</ng-template>
+
+<ng-template #cancel>
+    <div class="dialog-head bg-danger p-2">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="text-white m-0"><span class="material-icons text-white">warning</span> Annuler Modification</h4>
+            <button class="btn btn-trp btn-sm" (click)="cancelConfirm()">
+                <span class="material-icons text-white">close</span>
+            </button>
+        </div>
+    </div>
+    <div class="modal-body">
+        <p class="text-center"> Voulez-vous vraiment annuler les modification?</p>
+    </div>
+    <div class="modal-fouter d-flex justify-content-end p-1">
+        <button class="btn btn-sm btn-secondary mr-2" (click)="cancelConfirm()"> Non</button>
+        <button class="btn btn-sm btn-danger" (click)="close()"> Oui</button>
+    </div>
+</ng-template>
+<ng-template #deleteModal>
+    <div class="pt-4 text-center">
+        <span class="material-icons text-danger material-symbols-outlined" style="font-size:50px">cancel</span>
+    </div>
+    <div class="modal-body">
+        <h3 class="text-center mb-1"> Etes-Vous sûre?</h3>
+        <p class="text-center mb-2"> Voulez-vous vraiment supprimer les modification?</p>
+    </div>
+    <div class="modal-fouter d-flex justify-content-center p-2 mb-3">
+        <button class="btn btn-sm btn-secondary mr-2" (click)="close()"> Non</button>
+        <button class="btn btn-sm btn-danger" (click)="confirmDelete()"> Oui</button>
     </div>
 </ng-template>
