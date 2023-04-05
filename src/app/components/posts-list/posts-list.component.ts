@@ -18,12 +18,18 @@ postsListInitiale:IPosts[]=[]
 postsList:IPosts[]=[]
 formPost!:FormGroup
 progress:boolean=false
+deleteTitle:string=''
 confirmDialog!:MatDialogRef<any> //used so we can close only one opened dialog (confirmation dialog) and not all opened ones
-displayedColumnsLabels: Array<string> = ['N°', 'Title', 'Description','Action'];
+displayedColumnsLabels: Array<string> = ['N°', 'Title', 'Description'];/* header of the table */
+displayedColumns: Array<string> = ['N°','title', 'body','actions'];/* body */
   constructor(private postsService:PostsService, private dialog:MatDialog, private formBuilder:FormBuilder) { }
   @ViewChild('cancel')  cancel: any;
-  @ViewChild('paginator') paginator!: MatPaginator;
-  dataSource:any
+  @ViewChild(MatPaginator, { static: false }) set matPaginator(mp: MatPaginator) {
+    this.paginator = mp;
+    this.setPaginationAndSort();
+  }
+  paginator!: MatPaginator;
+  dataSource=new MatTableDataSource<IPosts>([])
   pageSize: number = 10;
   pageIndex: number = 0;
   mode:string=""
@@ -33,18 +39,25 @@ displayedColumnsLabels: Array<string> = ['N°', 'Title', 'Description','Action']
   ngOnInit(): void {
     this.postsService.getListPosts().subscribe({
       next:res=>{
-        // console.log('res',res);
+        console.log('res',res);
         // console.table(res);
         this.postsList=res
         this.postsListInitiale=res
-        this.dataSource=new MatTableDataSource([this.postsList]);
+        this.dataSource=new MatTableDataSource(this.postsList)
       },
       error:()=>{
 
       }
     })
   }
-
+/**paginator */
+    getPaginatorData(event: PageEvent) {
+      this.pageIndex = event ? event.pageIndex : 0;
+      this.pageSize = event ? event.pageSize : 10;
+    }
+    setPaginationAndSort() {
+      this.dataSource.paginator = this.paginator;
+    }
   ngAfterViewInit() {
     //runs automatically after ngOnInit and is always listening (detects changement)
     // this.dataSource.paginator = this.paginator;
@@ -76,7 +89,7 @@ displayedColumnsLabels: Array<string> = ['N°', 'Title', 'Description','Action']
     this.formPost=this.createForm(post)
     this.dialog.open(content, {panelClass:'modal-sm', disableClose:true,hasBackdrop:true,autoFocus:true,closeOnNavigation:true})
   }
-  close(){
+  close(event?:any){
     this.dialog.closeAll()
   }
   cancelModal(){
@@ -108,16 +121,13 @@ displayedColumnsLabels: Array<string> = ['N°', 'Title', 'Description','Action']
   cancelConfirm(){
     this.confirmDialog.close()
   }
-    /**paginator */
-    getPaginatorData(event: PageEvent) {
-      this.pageIndex = event ? event.pageIndex : 0;
-      this.pageSize = event ? event.pageSize : 10;
-    }
-    deletePost(idPost:number, deleteModal:any){
-      this.selectedElementIndex=idPost
+    
+    deletePost(element:{id:number,title:string}, deleteModal:any){
+      this.selectedElementIndex=element.id
+      this.deleteTitle=element.title
       this.dialog.open(deleteModal,{disableClose:true,hasBackdrop:true,autoFocus:true,closeOnNavigation:true})
     }
-    confirmDelete(){
+    confirmDelete(event?:any){
       this.progress=true
       this.postsListInitiale = this.postsListInitiale.filter((el:IPosts)=>{
         return el.id!==this.selectedElementIndex
