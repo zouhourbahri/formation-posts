@@ -118,13 +118,13 @@ displayedColumns: Array<string> = ['N°','title', 'body','actions'];/* body */
       this.formPost.markAsDirty()
     }
   }
-  cancelConfirm(){
+  cancelConfirm(event?:any){
     this.confirmDialog.close()
   }
     
     deletePost(element:{id:number,title:string}, deleteModal:any){
       this.selectedElementIndex=element.id
-      this.deleteTitle=element.title
+      this.deleteTitle=element.title.substring(0, 40);
       this.dialog.open(deleteModal,{disableClose:true,hasBackdrop:true,autoFocus:true,closeOnNavigation:true})
     }
     confirmDelete(event?:any){

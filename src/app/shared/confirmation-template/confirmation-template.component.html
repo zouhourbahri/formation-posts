@@ -1,0 +1,15 @@
+<div class="dialog-head bg-danger p-2">
+    <div class="d-flex justify-content-between align-items-center">
+        <h4 class="text-white m-0"><span class="material-icons text-white">warning</span> Annuler Modification</h4>
+        <button class="btn btn-trp btn-sm" (click)="cancelConfirm()">
+            <span class="material-icons text-white">close</span>
+        </button>
+    </div>
+</div>
+<div class="modal-body">
+    <p class="text-center"> Voulez-vous vraiment annuler les modification?</p>
+</div>
+<div class="modal-fouter d-flex justify-content-end p-2">
+    <button class="btn btn-sm btn-secondary mr-2" (click)="cancelConfirm()"> Non</button>
+    <button class="btn btn-sm btn-danger" (click)="close()"> Oui</button>
+</div>

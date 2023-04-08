@@ -19,7 +19,15 @@ import { SharedModule } from './shared/shared.module';
   ],
   imports: [
     BrowserModule,
-    BrowserAnimationsModule,HttpClientModule,MatTableModule,MatDialogModule,ReactiveFormsModule, FormsModule,MatProgressSpinnerModule,MatPaginatorModule,SharedModule
+    BrowserAnimationsModule,
+    HttpClientModule,
+    MatTableModule,
+    MatDialogModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
+    SharedModule
   ],
   providers: [],
   bootstrap: [AppComponent],
