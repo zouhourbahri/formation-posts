@@ -9,67 +9,9 @@
         </div>
     </div>
     <div>
-        <!-- <table mat-table [dataSource]="postsList" class="mat-elevation-z8 w-100" *ngIf="!progress"> -->
-        <!-- Position Column -->
-        <!-- <ng-container matColumnDef="N°">
-                <th mat-header-cell *matHeaderCellDef> N° </th>
-                <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-            </ng-container> -->
 
-        <!-- title Column -->
-        <!-- <ng-container matColumnDef="Title">
-                <th mat-header-cell *matHeaderCellDef> Title </th>
-                <td mat-cell *matCellDef="let element"> {{element.title}} </td>
-            </ng-container> -->
-
-        <!-- body Column -->
-        <!-- <ng-container matColumnDef="Description">
-                <th mat-header-cell *matHeaderCellDef> Description </th>
-                <td mat-cell *matCellDef="let element"> {{element.body}} </td>
-            </ng-container> -->
-
-        <!-- <tr mat-header-row *matHeaderRowDef="displayedColumnsLabels"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumnsLabels;"></tr> -->
-        <!-- </table> -->
-        <!-- ////////////////////////////////////////////////////////// -->
-        <!-- <table mat-table [dataSource]="postsList" class="mat-elevation-z8" *ngIf="!progress">
-            <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumnsLabels">
-                <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-                <ng-container *ngIf="column==='N°'">
-                    <td mat-cell *matCellDef="let element; let j = index"> {{j+1}} </td>
-                </ng-container>
-                <ng-container *ngIf="column==='Title'">
-                    <td mat-cell *matCellDef="let element"> {{element['title']}} </td>
-                </ng-container>
-                <ng-container *ngIf="column==='Description'">
-                    <td mat-cell *matCellDef="let element"> {{element['body']}} </td>
-                </ng-container>
-                <ng-container *ngIf="column==='Action'">
-                    <td mat-cell *matCellDef="let element;let j=index">
-                        <div class="d-flex justify-content-end align-items-center p-1">
-                            <button class="btn btn-success btn-sm mr-2" (click)="updatePost(element,j,modalAjout)">
-                                <span class="material-icons text-white">edit</span>
-                            </button>
-                            <button class="btn btn-danger btn-sm" (click)="deletePost(element['id'],deleteModal)">
-                                <span class="material-icons text-white">delete</span>
-                            </button>
-                        </div>
-                    </td>
-                </ng-container>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="displayedColumnsLabels"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumnsLabels;"></tr>
-        </table> -->
-        <!-- //////////////////////////////////////// -->
         <!-- start shared table  -->
-      <app-sahred-table [ListPosts]="postsList"  [displayedColumnsLabels]="displayedColumnsLabels" [displayedColumns]="displayedColumns"></app-sahred-table>
-        <!-- end shared table  -->
-
-        <!-- <mat-paginator #paginator *ngIf="dataSource?.filteredData?.length " 
-        showFirstLastButtons [pageSize]="pageSize" [length]="dataSource?.filteredData?.length"
-         (page)="getPaginatorData($event)" [pageSizeOptions]="[10, 25, 100]">
-        </mat-paginator> -->
+        <app-sahred-table *ngIf="!progress" [ListPosts]="postsList" [displayedColumnsLabels]="displayedColumnsLabels" [displayedColumns]="displayedColumns" (modifierPost)="updatePost($event,modalAjout)" (deletePostEvent)="deletePost($event, deleteModal)"></app-sahred-table>
         <div class="text-center" *ngIf="progress">
             <mat-spinner></mat-spinner>
         </div>
@@ -104,8 +46,8 @@
 </ng-template>
 
 <ng-template #cancel>
-    <app-confirmation-template (closeConfirm)="close($event)" (annulerConfirm)="cancelConfirm($event)"></app-confirmation-template>
+    <app-confirmation-template (closeConfirm)="close()" (annulerConfirm)="cancelConfirm($event)"></app-confirmation-template>
 </ng-template>
 <ng-template #deleteModal>
-    <app-delete [title]="deleteTitle" (closeModal)="close($event)" (deleteConfirm)="confirmDelete($event)"></app-delete>
+    <app-delete [title]="deleteTitle" (closeModal)="close()" (deleteConfirm)="confirmDelete()"></app-delete>
 </ng-template>

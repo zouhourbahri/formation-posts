@@ -4,8 +4,6 @@ import { IPosts } from 'src/app/core/modeles/posts';
 import { PostsService } from 'src/app/core/services/posts.service';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-posts-list',
@@ -24,14 +22,6 @@ displayedColumnsLabels: Array<string> = ['N°', 'Title', 'Description'];/* heade
 displayedColumns: Array<string> = ['N°','title', 'body','actions'];/* body */
   constructor(private postsService:PostsService, private dialog:MatDialog, private formBuilder:FormBuilder) { }
   @ViewChild('cancel')  cancel: any;
-  @ViewChild(MatPaginator, { static: false }) set matPaginator(mp: MatPaginator) {
-    this.paginator = mp;
-    this.setPaginationAndSort();
-  }
-  paginator!: MatPaginator;
-  dataSource=new MatTableDataSource<IPosts>([])
-  pageSize: number = 10;
-  pageIndex: number = 0;
   mode:string=""
   modalTitle:string=""
   modalDescription:string=""
@@ -43,21 +33,13 @@ displayedColumns: Array<string> = ['N°','title', 'body','actions'];/* body */
         // console.table(res);
         this.postsList=res
         this.postsListInitiale=res
-        this.dataSource=new MatTableDataSource(this.postsList)
       },
       error:()=>{
 
       }
     })
   }
-/**paginator */
-    getPaginatorData(event: PageEvent) {
-      this.pageIndex = event ? event.pageIndex : 0;
-      this.pageSize = event ? event.pageSize : 10;
-    }
-    setPaginationAndSort() {
-      this.dataSource.paginator = this.paginator;
-    }
+
   ngAfterViewInit() {
     //runs automatically after ngOnInit and is always listening (detects changement)
     // this.dataSource.paginator = this.paginator;
@@ -84,13 +66,13 @@ displayedColumns: Array<string> = ['N°','title', 'body','actions'];/* body */
     })
   }
 
-  updatePost(post:IPosts,index:number, content:any){
+  updatePost(event:{element:IPosts,index:number}, content:any){
     this.mode='Modifier'
-    this.selectedElementIndex =index
-    this.formPost=this.createForm(post)
+    this.selectedElementIndex =event.index
+    this.formPost=this.createForm(event.element)
     this.dialog.open(content, {panelClass:'modal-sm', disableClose:true,hasBackdrop:true,autoFocus:true,closeOnNavigation:true})
   }
-  close(event?:any){
+  close(){
     this.dialog.closeAll()
   }
   cancelModal(){
@@ -109,10 +91,12 @@ displayedColumns: Array<string> = ['N°','title', 'body','actions'];/* body */
         //updated selected element in the list by values from the formGroup
         this.postsListInitiale[this.selectedElementIndex]={...this.postsListInitiale[this.selectedElementIndex],...this.formPost.value}
       }
-    this.close()
-    setTimeout(()=>{
-      this.progress=false
-    },200)
+      this.postsList=this.postsListInitiale
+      console.log('postsList',this.postsList)
+      setTimeout(()=>{
+        this.progress=false
+        this.close()
+    },2000)
     } else {
       //si le formulaire n'est pas valid, mark as dirty pour indiquer les champs à remplir ou bien les champs invalides
       this.formPost.markAllAsTouched()
@@ -128,7 +112,7 @@ displayedColumns: Array<string> = ['N°','title', 'body','actions'];/* body */
       this.deleteTitle=element.title.substring(0, 40);
       this.dialog.open(deleteModal,{disableClose:true,hasBackdrop:true,autoFocus:true,closeOnNavigation:true})
     }
-    confirmDelete(event?:any){
+    confirmDelete(){
       this.progress=true
       this.postsListInitiale = this.postsListInitiale.filter((el:IPosts)=>{
         return el.id!==this.selectedElementIndex
