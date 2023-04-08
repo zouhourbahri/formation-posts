@@ -11,11 +11,13 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import { PostsListComponent } from './components/posts-list/posts-list.component';
 import { ComponentsModule } from './components/components.module';
 import { SharedModule } from './shared/shared.module';
+import { NavbarComponent } from './layout/navbar/navbar.component';
 // import {MatIconModule} from '@angular/material/icon';
 @NgModule({
   declarations: [
     AppComponent,
-    PostsListComponent
+    PostsListComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
