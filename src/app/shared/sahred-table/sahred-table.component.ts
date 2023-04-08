@@ -9,29 +9,18 @@ import { PostsService } from 'src/app/core/services/posts.service';
   styleUrls: ['./sahred-table.component.css']
 })
 export class SahredTableComponent implements OnInit {
-  postsList!:IPosts[]
-  postsListInitiale!: IPosts[];
+   
+  @Input()  set ListPosts(value)!: IPosts[];
   dataSource: any;
   @Output() ModifierPost : EventEmitter<boolean> = new EventEmitter();
-  displayedColumnsLabels: Array<string> = ['N°', 'Title', 'Description'];/* header of the table */
-displayedColumns: Array<string> = ['N°','title', 'body','actions'];/* body */
-  constructor(private postsService:PostsService,) { }
+  @Input() displayedColumnsLabels!: Array<string>  /* header of the table */
+  @Input() displayedColumns!: Array<string>  /* body */
+  constructor( ) { }
 
   ngOnInit(): void {
-    this.postsService.getListPosts().subscribe({
-      next:res=>{
-        console.log('res',res);
-        // console.table(res);
-        this.postsList=res
-        this.postsListInitiale=res
-        this.dataSource=new MatTableDataSource(this.postsList)
-      },
-      error:()=>{
-
-      }
-    })
+  
   }
-  updatePost(element:any,j:number,modalAjout:any){
+  updatePost(){
     this.ModifierPost.emit(true)
   }
 

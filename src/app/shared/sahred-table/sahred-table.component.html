@@ -1,5 +1,5 @@
 <div class="table-responsive">
-    <table mat-table [dataSource]="postsList" class="mat-elevation-z8 table table-striped table-bordered"  >
+    <table mat-table [dataSource]="ListPosts" class="mat-elevation-z8 table table-striped table-bordered"  >
         <ng-container [matColumnDef]="column"  *ngFor="let column of displayedColumns ;let i=index">
             <th mat-header-cell *matHeaderCellDef>{{ displayedColumnsLabels[i] }} </th>
             <ng-container *ngIf="column =='N°'">

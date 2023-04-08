@@ -68,6 +68,7 @@ displayedColumns: Array<string> = ['N°','title', 'body','actions'];/* body */
     this.postsList=this.postsListInitiale.filter((el:IPosts)=>{
       return el.title.toLowerCase().includes(event.target.value.toLowerCase()) //title (en miniscule) est ce qu'il contient ce qui est ecrit dans l'input (en miniscule)
     })
+    console.log('tableau',this.postsList);
   }
 
   //Open modal add post
